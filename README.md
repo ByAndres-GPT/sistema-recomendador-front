@@ -1,12 +1,50 @@
-# React + Vite
+# Proyecto de Recomendación de materias electivas UFPS
 
-This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
+## Descripción
 
-Currently, two official plugins are available:
+Esta aplicación permite a los usuarios subir un reporte de notas en formato PDF, procesarlo y obtener recomendaciones personalizadas basadas en el contenido del archivo.
 
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react) uses [Babel](https://babeljs.io/) for Fast Refresh
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react-swc) uses [SWC](https://swc.rs/) for Fast Refresh
+---
 
-## Expanding the ESLint configuration
+## Tecnologías utilizadas
 
-If you are developing a production application, we recommend using TypeScript with type-aware lint rules enabled. Check out the [TS template](https://github.com/vitejs/vite/tree/main/packages/create-vite/template-react-ts) for information on how to integrate TypeScript and [`typescript-eslint`](https://typescript-eslint.io) in your project.
+- React
+- React Router DOM
+- react-hot-toast
+- Tailwind CSS
+- JavaScript / JSX
+
+---
+
+## Instalación
+
+1. Clonar el repositorio:
+   ```bash
+   git clone https://github.com/ByAndres-GPT/sistema-recomendador-front
+
+## Capturas De Pantalla
+
+- Login:
+
+![image](https://github.com/user-attachments/assets/969a79e1-2ece-4d23-9b6f-b0f69bbffbea)
+
+- Registro:
+
+  
+![image](https://github.com/user-attachments/assets/d7cfb60f-768f-4771-8011-5169b6c39b59)
+
+- Subir PDF de reporte de notas:
+
+  
+![image](https://github.com/user-attachments/assets/eef0f37d-5c2b-4989-9a10-2238a753aeb0)
+
+- Recomendación de materias:
+
+  
+![image](https://github.com/user-attachments/assets/a1ea872c-f6d5-470d-ab9b-88f2dac6e793)
+
+
+
+
+
+
