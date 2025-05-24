@@ -21,6 +21,20 @@ Esta aplicación permite a los usuarios subir un reporte de notas en formato PDF
 1. Clonar el repositorio:
    ```bash
    git clone https://github.com/ByAndres-GPT/sistema-recomendador-front
+   
+2. Entrar a la carpeta:
+   ```bash
+   cd sistema-recomendador-front
+
+3. Instalar las dependencias:
+   ```bash
+   npm install
+
+4. Ejecutar el proyecto:
+   ```bash
+   npm run dev
+
+---
 
 ## Capturas De Pantalla
 
