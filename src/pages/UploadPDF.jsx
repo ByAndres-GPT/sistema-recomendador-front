@@ -34,7 +34,7 @@ export default function UploadPDF() {
 
     try {
       const response = await fetch(
-        `http://3.147.103.177:8000/recommendations/student/${user.codigo}`
+        `/api/recommendations/student/${user.codigo}`
       );
 
       if (response.status === 404) {
@@ -89,7 +89,7 @@ export default function UploadPDF() {
 
     try {
       // Paso 1: Enviar PDF al backend
-      const response = await fetch("http://3.147.103.177:8000/procesar-pdf", {
+      const response = await fetch("/api/procesar-pdf", {
         method: "POST",
         body: formData,
       });
@@ -111,7 +111,7 @@ export default function UploadPDF() {
 
       // Paso 3: Obtener recomendaciones
       const recResponse = await fetch(
-        `http://3.147.103.177:8000/recommendations/student/${estudianteId}`
+        `/api/recommendations/student/${estudianteId}`
       );
 
       if (!recResponse.ok) {
