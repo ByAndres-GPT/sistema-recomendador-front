@@ -20,6 +20,49 @@ export default function UploadPDF() {
     }, 1500);
   };
 
+  const handleRecommendacionesAnteriores = async () => {
+    const user = JSON.parse(localStorage.getItem("user"));
+
+    if (!user || !user.codigo) {
+      toast.error("No se ha iniciado sesión correctamente.");
+      navigate("/");
+      return;
+    }
+
+    const loadingId = toast.loading("Buscando recomendaciones anteriores...");
+    setLoading(true);
+
+    try {
+      const response = await fetch(
+        `http://3.147.103.177:8000/recommendations/student/${user.codigo}`
+      );
+
+      if (response.status === 404) {
+        toast.dismiss(loadingId);
+        toast.error("Estudiante no registrado.");
+        return;
+      }
+
+      if (!response.ok) {
+        const err = await response.json();
+        throw new Error(err.error || "Error al obtener recomendaciones.");
+      }
+
+      const recomendaciones = await response.json();
+      localStorage.setItem("recommendations", JSON.stringify(recomendaciones));
+
+      toast.dismiss(loadingId);
+      toast.success("Recomendaciones cargadas con éxito.");
+      navigate("/recommendations");
+    } catch (error) {
+      toast.dismiss();
+      toast.error(error.message || "Error al obtener recomendaciones.");
+      console.error(error);
+    } finally {
+      setLoading(false);
+    }
+  };
+
   const user = JSON.parse(localStorage.getItem("user"));
 
   const handleFileChange = (e) => {
@@ -33,6 +76,7 @@ export default function UploadPDF() {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
+
     if (!pdfFile) {
       toast.error("Debes seleccionar un archivo PDF.");
       return;
@@ -40,61 +84,72 @@ export default function UploadPDF() {
 
     setLoading(true);
 
-    setTimeout(() => {
-      const fakeResponse = [
-        {
-          id: "1155715",
-          name: "SOLUCIONES TECNOLOGICA EN EL CONTEXTO SOCIAL",
-          score: 4.7,
-        },
-        { id: "1155811", name: "LABORATORIO DE PROGRAMACION", score: 4.3 },
-        { id: "1156703", name: "INTELIGENCIA ARTIFICIAL", score: 4.3 },
-        {
-          id: "1155616",
-          name: "APLICACIONES PRÁCTICAS DE TEORIA DE GRAFOS",
-          score: 4.2,
-        },
-        { id: "1156902", name: "SEGURIDAD INFORMATICA", score: 4.2 },
-        { id: "1155713", name: "BASES DE DATOS AVANZADAS", score: 4.1 },
-        { id: "1155716", name: "ANALITICA DE DATOS", score: 4.1 },
-        {
-          id: "1157007",
-          name: "DESARROLLO DE APLICACIONES BASADAS EN MICROSERVICIOS",
-          score: 3.95,
-        },
-        { id: "1157005", name: "MINERIA DE DATOS", score: 3.95 },
-        {
-          id: "1155712",
-          name: "ECONOMIA Y FINANZAS PARA INGENIEROS",
-          score: 3.9,
-        },
-        { id: "1155615", name: "MULTIMEDIA Y REALIDAD MIXTA", score: 3.6 },
-        { id: "1156804", name: "ADMINISTRACION DE SO DE RED", score: 3.6 },
-        { id: "1157004", name: "COMPUTACION EN LA NUBE", score: 3.6 },
-        { id: "1157003", name: "INFORMATICA JURIDICA", score: 3.5 },
-        {
-          id: "1155906",
-          name: "ESTRATEGIAS PARA LA EMPLEABILIDAD EN SISTEMAS",
-          score: 3.1,
-        },
-      ];
-      localStorage.setItem("recommendations", JSON.stringify(fakeResponse));
+    const formData = new FormData();
+    formData.append("file", pdfFile);
+
+    try {
+      // Paso 1: Enviar PDF al backend
+      const response = await fetch("http://3.147.103.177:8000/procesar-pdf", {
+        method: "POST",
+        body: formData,
+      });
+
+      if (!response.ok) {
+        const errorData = await response.json();
+        throw new Error(errorData.error || "Error procesando el PDF.");
+      }
+
+      const data = await response.json();
+
+      // Paso 2: Extraer el ID del estudiante
+      const estudianteId = data?.informacion_estudiante?.codigo_estudiante;
+      if (!estudianteId) {
+        throw new Error(
+          "No se pudo obtener el ID del estudiante desde el PDF."
+        );
+      }
+
+      // Paso 3: Obtener recomendaciones
+      const recResponse = await fetch(
+        `http://3.147.103.177:8000/recommendations/student/${estudianteId}`
+      );
+
+      if (!recResponse.ok) {
+        const err = await recResponse.json();
+        throw new Error(err.error || "Error al obtener recomendaciones.");
+      }
+
+      const recomendaciones = await recResponse.json();
+
+      // Paso 4: Guardar y redirigir
+      localStorage.setItem("recommendations", JSON.stringify(recomendaciones));
       toast.success("Recomendaciones generadas con éxito.");
-      //setLoading(false);
+
       setTimeout(() => {
         navigate("/recommendations");
       }, 1500);
-    }, 3000);
+    } catch (error) {
+      console.error("Error:", error.message);
+      toast.error(error.message || "Algo salió mal.");
+    } finally {
+      setLoading(false);
+    }
   };
 
   return (
     <div className="min-h-screen bg-background text-text flex flex-col items-center justify-center p-6 relative">
-      <div className="absolute top-6 right-6">
+      <div className="absolute top-6 right-6 flex flex-col gap-3 items-end">
         <button
           onClick={handleLogout}
-          className="bg-red-500 hover:bg-red-600 text-white px-4 py-2 rounded-xl shadow-md transition"
+          className="bg-red-500 hover:bg-red-600 text-white px-4 py-2 rounded-xl shadow-md transition-all duration-200"
         >
           Cerrar sesión
+        </button>
+        <button
+          onClick={handleRecommendacionesAnteriores}
+          className="bg-blue-500 hover:bg-blue-600 text-white px-4 py-2 rounded-xl shadow-md transition-all duration-200"
+        >
+          📄 Recomendaciones anteriores
         </button>
       </div>
 
